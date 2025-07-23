@@ -1,0 +1,609 @@
+{
+  "name": "Multi Agent Crew",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a97eea71-a86a-4abb-a082-7ee8be87f900",
+      "name": "When chat message received",
+      "webhookId": "e3c6f4f6-a372-40d3-a6a3-a48dc06cdde4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4d26ebfa-abb5-4f00-a044-abe23ddfe494",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "=safe",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "0d1b4776-febd-4e79-a968-d9370aab9c93",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "model": "llama-guard3:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        176,
+        176
+      ],
+      "id": "1a643451-c5df-4451-8388-0a6b1e27443e",
+      "name": "Llama Guard",
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "7fd197e5-a08e-4e49-adb4-28b5418b8fb4",
+      "name": "Gatekeeper Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "n8n test"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        192
+      ],
+      "id": "ce350c9d-e657-462c-b414-08cf44df40ee",
+      "name": "Crew Memory"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "n8n test"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1456,
+        -672
+      ],
+      "id": "1ea2a5f2-d101-4d8b-b3dd-59676eecb597",
+      "name": "Crew Memory1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are the manager agent overseeing a group of agents. Assign all questions relating to the weather to the weather forecasting agent, all questions relating to currency exchanges to the forex exchange agent and all questions relating to scheduling to the google calendar agent. For all other queries, assign it to the secretary agent. For every message that you receive, determine which agent/s to assign the task to."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        784,
+        -192
+      ],
+      "id": "0b6057e0-87a8-4697-bea6-18bf579a57f6",
+      "name": "Manager Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"assigned_agents\": [\"Google Calendar Agent\", \"Forex Agent\", \"Weather Forecast Agent\", \"Secretary Agent\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        960,
+        -16
+      ],
+      "id": "e0dacf55-e196-467a-a510-88ecd2ac73e4",
+      "name": "Manager Output Parser"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        784,
+        -16
+      ],
+      "id": "b29f9c19-0108-4091-93bb-2b74c26f2f6a",
+      "name": "Qwen2.5 7bn",
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        1520,
+        -480
+      ],
+      "id": "10795f4f-9769-40c9-93da-4041c4323564",
+      "name": "Weather Forecasting Agent",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.assigned_agents",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        -192
+      ],
+      "id": "bd19d6e4-bbe5-463a-be86-2ca439daa4b9",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json['output.assigned_agents'] }}",
+                    "rightValue": "weather forecasting agent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a4f8f303-5ed1-440d-a736-d0d536c41269"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7aadd613-a569-418a-9d3c-d8106f87cb4d",
+                    "leftValue": "={{ $json['output.assigned_agents'] }}",
+                    "rightValue": "forex agent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a8452efd-cf4a-4a97-83f0-20ba4bea84a7",
+                    "leftValue": "={{ $json['output.assigned_agents'] }}",
+                    "rightValue": "google calendar agent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "792d9742-8165-4f90-8ced-851b6792650b",
+                    "leftValue": "={{ $json['output.assigned_agents'] }}",
+                    "rightValue": "secretary agent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1344,
+        -192
+      ],
+      "id": "2b766f4b-7a28-4675-8038-0ae7866d59ff",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "07b92d29-1490-43a3-8e73-ae5925753dca",
+              "name": "responseText",
+              "value": "You have asked an unsafe query",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        848,
+        208
+      ],
+      "id": "16ce63b8-554a-4d95-9551-8a334eeff814",
+      "name": "Default reply for dangerous queries"
+    },
+    {
+      "parameters": {
+        "description": "Call this tool for questions relating to the weather",
+        "language": "python",
+        "pythonCode": "# Example: convert the incoming query to uppercase and return it\nreturn f\"The weather is sunny in {query}\""
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        1712,
+        -688
+      ],
+      "id": "ee02085c-5498-4aca-a74b-24cb4f5a7232",
+      "name": "Code Tool"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        -656
+      ],
+      "id": "adb915dc-2095-4137-bc74-8ee765f1cdb1",
+      "name": "Qwen 2.5 7bn",
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "mistral:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        -112
+      ],
+      "id": "5320494e-8c73-4cc0-8a06-39153225e1a8",
+      "name": "Mistral",
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "n8n test"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1744,
+        -112
+      ],
+      "id": "7a38530c-bb38-46e8-94ed-e923d5dec55a",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        1632,
+        -272
+      ],
+      "id": "f7b33b31-bb51-4872-a180-fca07de8111f",
+      "name": "Forex Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Gatekeeper Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Manager Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Default reply for dangerous queries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Llama Guard": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gatekeeper Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gatekeeper Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crew Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Gatekeeper Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crew Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Weather Forecasting Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manager Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Manager Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qwen2.5 7bn": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Manager Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manager Agent": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Weather Forecasting Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Forex Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Weather Forecasting Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qwen 2.5 7bn": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Weather Forecasting Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Forex Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Forex Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "86a12c2e-097b-417d-8e49-bf8052a72dc7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "fkh67MeUPBuGG2re",
+  "tags": []
+}
