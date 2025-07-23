@@ -37,3 +37,11 @@ The repository walks through the n8n setup along with observations in the `noteb
 
 ## Acknowledgements
 This repository uses n8n's [self-hosted-ai-starter-it](https://github.com/n8n-io/self-hosted-ai-starter-kit) as its primary resource.
+
+Note: I had to add a few more keys to the docker-compose.yaml file to make it work. They are:
+```
+    - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+    - N8N_RUNNERS_ENABLED=true
+```
+
+These keys are under the `x-n8n: &service-n8n` service.
