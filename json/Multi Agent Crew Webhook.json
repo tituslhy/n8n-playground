@@ -3,6 +3,8 @@
   "nodes": [
     {
       "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
@@ -73,6 +75,8 @@
     },
     {
       "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.chatInput }}",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -115,7 +119,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "text": "={{ $('Webhook').item.json.body.chatInput }}",
         "hasOutputParser": true,
         "messages": {
           "messageValues": [
@@ -171,7 +175,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "text": "={{ $('Webhook').item.json.body.chatInput }}",
         "hasOutputParser": true,
         "options": {}
       },
@@ -366,7 +370,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are a helpful assistant specializing in getting the latest currency exchange rates. Always use a tool to answer the user's question.\n\nHere's the user's question:\n\n{{ $('When chat message received').item.json.chatInput }}",
+        "text": "=You are a helpful assistant specializing in getting the latest currency exchange rates. Always use a tool to answer the user's question.\n\nHere's the user's question:\n{{ $('Webhook').item.json.body.chatInput }}\n",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -381,7 +385,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "text": "={{ $('Webhook').item.json.body.chatInput }}",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -437,7 +441,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "={{ $('When chat message received').item.json.chatInput }}",
+        "text": "={{ $('Webhook').item.json.body.chatInput }}",
         "batching": {}
       },
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
@@ -625,7 +629,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=This is the user's question:\n{{ $('When chat message received').last().json.chatInput }}\n\nThis are the answers from the agents: {{ $json.fullText }}\n\nSummarize the outputs from the agents to answer the user's question.",
+        "text": "=This is the user's question:\n{{ $('Webhook').item.json.body.chatInput }}\n\nThis are the answers from the agents: {{ $json.fullText }}\n\nSummarize the outputs from the agents to answer the user's question.",
         "batching": {}
       },
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
@@ -636,19 +640,30 @@
       ],
       "id": "5745e7fe-9f1a-4849-a5d8-fb07f4a8528f",
       "name": "Consolidate Answers"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "n8n",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        144,
+        -320
+      ],
+      "id": "bded0571-a4e6-4fb7-8a0b-73e574ad2a1d",
+      "name": "Webhook",
+      "webhookId": "037ac728-09af-444c-9b6d-90a250f40237"
     }
   ],
   "pinData": {},
   "connections": {
     "When chat message received": {
       "main": [
-        [
-          {
-            "node": "Gatekeeper Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "If": {
@@ -975,13 +990,24 @@
           }
         ]
       ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Gatekeeper Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "2516ece0-314a-4cac-ad49-45838513e42b",
+  "versionId": "71f0f99d-5e97-45a1-b918-6f7116e63ee0",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"

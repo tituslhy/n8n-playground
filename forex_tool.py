@@ -7,14 +7,12 @@ mcp = FastMCP(name="Exchange rate tool", port=3000)
 async def get_exchange_rate(
     currency_from: str = "USD",
     currency_to: str = "EUR",
-    currency_date: str = "latest",
 ):
     """Use this to get current exchange rate.
 
     Args:
         currency_from: The currency to convert from (e.g., "USD").
         currency_to: The currency to convert to (e.g., "EUR").
-        currency_date: The date for the exchange rate or "latest". Defaults to "latest".
 
     Returns:
         A dictionary containing the exchange rate data, or an error message if the request fails.
@@ -22,7 +20,7 @@ async def get_exchange_rate(
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"https://api.frankfurter.app/{currency_date}",
+                f"https://api.frankfurter.app/latest",
                 params={"from": currency_from, "to": currency_to},
             )
             response.raise_for_status()
