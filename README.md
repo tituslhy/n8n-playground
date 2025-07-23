@@ -1,5 +1,5 @@
 # n8n-playground
-n8n playground
+Deploying a ready-to-use open-source Docker Compose setup for rapid local AI and low-code development.
 
 ![n8n.io - Screenshot](https://raw.githubusercontent.com/n8n-io/self-hosted-ai-starter-kit/main/assets/n8n-demo.gif)
 
