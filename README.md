@@ -23,6 +23,9 @@ Run
 python forex_tool.py
 ```
 
+## Accessing the n8n workflows built
+n8n allows for built workflows to be downloaded - these files can then be imported into other n8n servers. All workflows can be accessed in the `json` folder.
+
 ## Report
 The repository walks through the n8n setup along with observations in the `notebooks` folder. The main notebooks are;
 ```
