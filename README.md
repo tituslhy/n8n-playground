@@ -3,6 +3,8 @@ Deploying a ready-to-use open-source Docker Compose setup for rapid local AI and
 
 ![n8n.io - Screenshot](https://raw.githubusercontent.com/n8n-io/self-hosted-ai-starter-kit/main/assets/n8n-demo.gif)
 
+This repository is a companion resource to the Medium article [Building your first no code agent with n8n](https://medium.com/@tituslhy/building-your-first-no-code-agent-with-n8n-e9e9ea0c23d1).
+
 ## Setup
 This repository uses the [uv package installer](https://docs.astral.sh/uv/pip/packages/).
 
