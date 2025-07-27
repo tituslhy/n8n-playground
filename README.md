@@ -4,7 +4,7 @@ Deploying a ready-to-use open-source Docker Compose setup for rapid local AI and
 ![n8n.io - Screenshot](https://raw.githubusercontent.com/n8n-io/self-hosted-ai-starter-kit/main/assets/n8n-demo.gif)
 
 ## Setup
-This repository uses the [uv package installer](https://docs.astral.sh/uv/pip/packages/). 
+This repository uses the [uv package installer](https://docs.astral.sh/uv/pip/packages/).
 
 To create a virtual environment with the dependencies installed, simply type in your terminal:
 ```
